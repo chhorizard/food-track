@@ -4,14 +4,15 @@ import './calendar.css'
 
 
 export default class Calendar extends React.Component {
-    
+
     state = {
         dateContext: moment(),
         today: moment(),
         showMonthPopup: false,
         showYearPopup: false,
         selectedDay: null,
-        value: ''
+        value: '',
+        dayList: []
     }
 
     constructor(props) {
@@ -28,8 +29,14 @@ export default class Calendar extends React.Component {
     }
     
     handleSubmit(event) {
-        alert('A name was submitted: ' + this.state.value);
         event.preventDefault();
+
+        let dayList = this.state.dayList;
+        dayList.push(this.state.value);
+        this.setState({
+            dayList: dayList
+        });
+        localStorage.setItem(this.state.selectedDay, JSON.stringify(dayList));
     }
 
     weekdaysShort = moment.weekdaysShort();
@@ -108,16 +115,24 @@ export default class Calendar extends React.Component {
     }
 
     onDayClick = async (e, day) => {
-        console.log("hello");
         //var response = await fetch("https://cd5d9354f208.ngrok.io/api/cors");
 
         //var data = await response.text();
         //console.log(data);
-        this.setState({
-            selectedDay: day
-        }, () => {
-            console.log("SELECTED DAY: ", this.state.selectedDay);
-        });
+        if (!localStorage.getItem(day))
+        {
+            this.setState({
+                selectedDay: day,
+                dayList: []
+            });
+        }
+
+        else {
+            this.setState({
+                selectedDay: day,
+                dayList: JSON.parse(localStorage.getItem(day))
+            });
+        }
 
         this.props.onDayClick && this.props.onDayClick(e, day);
     }
@@ -230,6 +245,9 @@ export default class Calendar extends React.Component {
                         </label>
                         <input type="submit" value="Submit" />
                     </form>
+                    <div>
+                        {this.state.dayList.map((item) => <li>{item}</li>)}
+                    </div>
                 </div>
             </>
         );
