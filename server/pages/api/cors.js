@@ -13,7 +13,20 @@ const cors = initMiddleware(
 export default async function handler(req, res) {
   // Run cors
   await cors(req, res)
+  
+  var dict = {
+    Apple: "500cal",
+    Banana: "300cal",
+    Orange: "250cal"
+  };
+
+  food = req.query.food;
+
+  if (!(food in dict)) {
+    res.json({message: 'ERROR'});
+    return;
+  }
 
   // Rest of the API logic
-  res.json({ message: 'Hello Everyone!'})
+  res.json({ message: dict[food]})
 }
