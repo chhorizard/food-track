@@ -28,11 +28,22 @@ export default class Calendar extends React.Component {
         this.setState({value: event.target.value});
     }
     
-    handleSubmit(event) {
+    handleSubmit = async (event) => {
         event.preventDefault();
+        
+        if (this.state.value === '') {
+            return;
+        }
 
+        var response = await fetch("http://*URL*/api/cors/?food=" + this.state.value);
+
+        var data = await response.text();
+        console.log(data);
         let dayList = this.state.dayList;
         dayList.push(this.state.value);
+        //if (data !== 'ERROR') {
+        //    dayList.push(data);
+        //}
         this.setState({
             dayList: dayList
         });
@@ -114,9 +125,8 @@ export default class Calendar extends React.Component {
         );
     }
 
-    onDayClick = async (e, day) => {
+    onDayClick(e, day){
         //var response = await fetch("https://cd5d9354f208.ngrok.io/api/cors");
-
         //var data = await response.text();
         //console.log(data);
         if (!localStorage.getItem(day))
